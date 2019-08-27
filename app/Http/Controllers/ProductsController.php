@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Product;
 use Illuminate\Http\Request;
-use App\Http\Resources\Product as ProductResource;
+use App\Http\Requests\ProductRequest;
+use App\Http\Resources\ProductResource;
 use App\Http\Resources\ProductCollection;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductsController extends Controller
 {
@@ -16,7 +18,7 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        return new ProductCollection(Product::all());
+        return new ProductCollection(Product::paginate(20));
     }
 
 
@@ -26,9 +28,23 @@ class ProductsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        //
+        $product = new Product;
+
+        $product->name = $request->name;
+        $product->price = $request->price;
+        $product->description = $request->description;
+        $product->featured = $request->featured;
+        $product->image = $request->image;
+        $product->category_id = $request->category_id;
+        $product->brand_id = $request->brand_id;
+
+        $product->save();
+
+        return response([
+            'data' => new ProductResource($product)
+        ], Response::HTTP_CREATED);
     }
 
     /**
@@ -51,7 +67,20 @@ class ProductsController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //
+        
+        $product->name = $request->name;
+        $product->price = $request->price;
+        $product->description = $request->description;
+        $product->featured = $request->featured;
+        $product->image = $request->image;
+        $product->category_id = $request->category_id;
+        $product->brand_id = $request->brand_id;
+
+        $product->save();
+
+        return response([
+            'data' => new ProductResource($product)
+        ],201);
     }
 
     /**
@@ -64,6 +93,6 @@ class ProductsController extends Controller
     {
         $product->delete();
 
-        return $response()->json(null, 200);
+        return response()->json(null, 204);
     }
 }
