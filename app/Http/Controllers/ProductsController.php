@@ -80,7 +80,7 @@ class ProductsController extends Controller
 
         return response([
             'data' => new ProductResource($product)
-        ],201);
+        ],Response::HTTP_CREATED);
     }
 
     /**
@@ -93,6 +93,6 @@ class ProductsController extends Controller
     {
         $product->delete();
 
-        return response()->json(null, 204);
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }
